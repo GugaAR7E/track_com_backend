@@ -1,0 +1,402 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track | Sneakers</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .imagem-produto {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 12px;
+}
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: white;
+        }
+
+        header {
+            background: #0d1424;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #202b40;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: white;
+        }
+
+        nav a {
+            color: #ccc;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        nav a:hover {
+            color: #5685ff;
+        }
+
+        .hero {
+            padding: 80px 8%;
+            background: linear-gradient(120deg, #101c35, #080b12);
+        }
+
+        .hero h1 {
+            font-size: 46px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #b5bdcc;
+            font-size: 18px;
+        }
+
+        section {
+            padding: 45px 8%;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+        }
+
+        .produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 22px;
+        }
+
+        .produto {
+            background: #111827;
+            padding: 25px;
+            border: 1px solid #263248;
+            border-radius: 10px;
+        }
+
+        .produto h3 {
+            margin-bottom: 12px;
+        }
+
+        .preco {
+            color: #7da0ff;
+            font-size: 20px;
+            margin-top: 12px;
+        }
+
+        .conta {
+            max-width: 420px;
+            margin: auto;
+            background: #111827;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #263248;
+        }
+
+        .conta h2 {
+            margin-bottom: 15px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #080b12;
+            border: 1px solid #354158;
+            border-radius: 5px;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #315fe8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4775ff;
+        }
+
+        #mensagem {
+            margin-top: 10px;
+            color: #a8bbff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #8c96a8;
+            border-top: 1px solid #202b40;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">TRACK</div>
+
+        <nav>
+            <a href="#inicio">Início</a>
+            <a href="#produtos">Produtos</a>
+            <a href="#conta">Minha conta</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero" id="inicio">
+            <h1>Encontre seu próximo passo.</h1>
+            <p>Sneakers para quem tem seu próprio estilo.</p>
+        </section>
+
+        <section id="produtos">
+            <h2>Nossos produtos</h2>
+            <div class="produtos" id="listaProdutos">
+                <p>Carregando produtos...</p>
+            </div>
+        </section>
+
+        <section id="conta">
+            <div class="conta">
+                <h2>Crie sua conta</h2>
+
+                <form id="formCadastro">
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Seu nome"
+                        required
+                    >
+
+                    <input
+                        type="email"
+                        id="emailCadastro"
+                        placeholder="Seu e-mail"
+                        required
+                    >
+
+                    <input
+                        type="password"
+                        id="senhaCadastro"
+                        placeholder="Sua senha"
+                        required
+                    >
+
+                    <button type="submit">Cadastrar</button>
+                </form>
+
+                <h2>Já tem uma conta?</h2>
+
+                <form id="formLogin">
+                    <input
+                        type="email"
+                        id="emailLogin"
+                        placeholder="Seu e-mail"
+                        required
+                    >
+
+                    <input
+                        type="password"
+                        id="senhaLogin"
+                        placeholder="Sua senha"
+                        required
+                    >
+
+                    <button type="submit">Entrar</button>
+                </form>
+
+                <p id="mensagem"></p>
+                <p id="usuarioLogado"></p>
+
+                <button id="botaoSair" type="button" hidden>
+                    Sair da conta
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>TRACK © 2026 — Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        const listaProdutos = document.getElementById("listaProdutos");
+        const mensagem = document.getElementById("mensagem");
+
+        async function carregarProdutos() {
+            try {
+                const resposta = await fetch("/api/produtos");
+
+                if (!resposta.ok) {
+                    throw new Error("Erro ao buscar produtos");
+                }
+
+                const produtos = await resposta.json();
+
+                listaProdutos.innerHTML = "";
+
+                
+                produtos.forEach(produto => {
+                    const card = document.createElement("article");
+                    card.className = "produto";
+
+                    if (produto.imagem) {
+                        const imagem = document.createElement("img");
+                        imagem.src = produto.imagem;
+                        imagem.alt = produto.nome;
+                        imagem.className = "imagem-produto";
+                        imagem.loading = "lazy";
+
+                        card.appendChild(imagem);
+                    }
+
+                    const nome = document.createElement("h3");
+                    nome.textContent = produto.nome;
+
+                    const preco = document.createElement("p");
+                    preco.className = "preco";
+                    preco.textContent = Number(produto.preco)
+                        .toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL"
+                        });
+
+                    card.append(nome, preco);
+                    listaProdutos.appendChild(card);
+                });
+
+
+                if (produtos.length === 0) {
+                    listaProdutos.textContent =
+                        "Nenhum produto cadastrado.";
+                }
+            } catch (erro) {
+                listaProdutos.textContent =
+                    "Não foi possível carregar os produtos.";
+                console.error(erro);
+            }
+        }
+
+        document.getElementById("formCadastro")
+            .addEventListener("submit", async evento => {
+                evento.preventDefault();
+                mensagem.textContent = "";
+
+                const dados = {
+                    nome: document.getElementById("nome").value,
+                    email: document.getElementById("emailCadastro").value,
+                    senha: document.getElementById("senhaCadastro").value
+                };
+
+                try {
+                    const resposta = await fetch("/api/cadastro", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(dados)
+                    });
+
+                    const resultado = await resposta.json();
+
+                    mensagem.textContent = resposta.ok
+                        ? "Cadastro realizado! Agora você pode entrar."
+                        : resultado.erro || "Não foi possível realizar o cadastro.";
+
+                } catch (erro) {
+                    mensagem.textContent = "Erro ao conectar ao servidor.";
+                }
+            });
+
+        document.getElementById("formLogin")
+            .addEventListener("submit", async evento => {
+                evento.preventDefault();
+                mensagem.textContent = "";
+
+                const dados = {
+                    email: document.getElementById("emailLogin").value,
+                    senha: document.getElementById("senhaLogin").value
+                };
+
+                try {
+                    const resposta = await fetch("/api/login", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(dados)
+                    });
+
+                    const resultado = await resposta.json();
+
+                    if (resposta.ok) {
+                        mensagem.textContent = "Login realizado com sucesso!";
+                        verificarSessao();
+                    } else {
+                        mensagem.textContent =
+                            resultado.erro || "E-mail ou senha incorretos.";
+                    }
+                } catch (erro) {
+                    mensagem.textContent = "Erro ao conectar ao servidor.";
+                }
+            });
+
+        async function verificarSessao() {
+            try {
+                const resposta = await fetch("/api/sessao");
+                const dados = await resposta.json();
+
+                document.getElementById("usuarioLogado").textContent =
+                    dados.usuario
+                        ? "Logado como: " + dados.usuario.nome
+                        : "";
+
+                document.getElementById("botaoSair").hidden =
+                    !dados.usuario;
+            } catch (erro) {
+                console.error("Não foi possível verificar a sessão.", erro);
+            }
+        }
+
+        document.getElementById("botaoSair")
+            .addEventListener("click", async () => {
+                try {
+                    const resposta = await fetch("/api/logout", {
+                        method: "POST"
+                    });
+
+                    if (resposta.ok) {
+                        mensagem.textContent = "Você saiu da sua conta.";
+                        verificarSessao();
+                    }
+                } catch (erro) {
+                    mensagem.textContent = "Erro ao sair da conta.";
+                }
+            });
+
+        carregarProdutos();
+        verificarSessao();
+    </script>
+
+</body>
+</html>

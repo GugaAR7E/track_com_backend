@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administração | Track</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        main {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        p {
+            color: #b5bdcc;
+            margin-bottom: 25px;
+        }
+
+        form {
+            background: #111827;
+            border: 1px solid #263248;
+            border-radius: 10px;
+            padding: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 16px 0 8px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            background: #080b12;
+            color: white;
+            border: 1px solid #354158;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 5px;
+            background: #315fe8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #mensagem {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main>
+        <h1>TRACK ADMIN</h1>
+        <p>Painel de cadastro de produtos</p>
+
+        <!-- Login do administrador -->
+        <section id="loginAdmin">
+            <h2>Login do administrador</h2>
+
+            <form id="formLogin">
+                <label for="usuarioAdmin">Usuário</label>
+                <input
+                    type="text"
+                    id="usuarioAdmin"
+                    name="usuario"
+                    required
+                >
+
+                <label for="senhaAdmin">Senha</label>
+                <input
+                    type="password"
+                    id="senhaAdmin"
+                    name="senha"
+                    required
+                >
+
+                <button type="submit">Entrar</button>
+                <p id="mensagemLogin"></p>
+            </form>
+        </section>
+
+        <!-- Cadastro dos tênis: começa oculto -->
+        <section id="areaCadastro" hidden>
+            <h2>Cadastrar tênis</h2>
+
+            <form id="formProduto">
+                <label for="nome">Nome do tênis</label>
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    required
+                >
+
+                <label for="descricao">Descrição</label>
+                <textarea id="descricao" name="descricao"></textarea>
+
+                <label for="preco">Preço (R$)</label>
+                <input
+                    type="number"
+                    id="preco"
+                    name="preco"
+                    min="0.01"
+                    step="0.01"
+                    required
+                >
+
+                <label for="estoque">Quantidade em estoque</label>
+                <input
+                    type="number"
+                    id="estoque"
+                    name="estoque"
+                    min="0"
+                    step="1"
+                    required
+                >
+
+                <label for="imagem">Foto do tênis</label>
+                <input
+                    type="file"
+                    id="imagem"
+                    name="imagem"
+                    accept="image/jpeg,image/png,image/webp"
+                    capture="environment"
+                    required
+                >
+
+                <button type="submit">Cadastrar tênis</button>
+                <p id="mensagem"></p>
+            </form>
+            
+            <hr>
+
+            <h2>Gerenciar produtos</h2>
+            <div id="listaAdmin">
+                <p>Carregando produtos...</p>
+            </div>
+            <p id="mensagemGerenciamento"></p>
+
+        </section>
+    </main>
+
+
+<script>
+    const formulario = document.getElementById('formProduto');
+    const mensagem = document.getElementById('mensagem');
+
+    const formLogin = document.getElementById('formLogin');
+    const mensagemLogin = document.getElementById('mensagemLogin');
+    const loginAdmin = document.getElementById('loginAdmin');
+    const areaCadastro = document.getElementById('areaCadastro');
+
+    async function verificarSessao() {
+        try {
+            const resposta = await fetch('/api/admin/sessao');
+            const dados = await resposta.json();
+
+            loginAdmin.hidden = dados.autenticado;
+            areaCadastro.hidden = !dados.autenticado;
+            if (dados.autenticado) {
+            await carregarProdutosAdmin();
+}
+        } catch (erro) {
+            mensagemLogin.textContent = 'Erro ao verificar o login.';
+        }
+    }
+
+    formLogin.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+
+        const dados = {
+            usuario: document.getElementById('usuarioAdmin').value,
+            senha: document.getElementById('senhaAdmin').value
+        };
+
+        try {
+            const resposta = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados)
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || 'Falha no login.');
+            }
+
+            await verificarSessao();
+        } catch (erro) {
+            mensagemLogin.textContent = erro.message;
+        }
+    });
+
+    formulario.addEventListener('submit', async (evento) => {
+        evento.preventDefault();
+
+        const dados = new FormData(formulario);
+
+        try {
+            const resposta = await fetch('/api/admin/produtos', {
+                method: 'POST',
+                body: dados
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    resultado.erro || 'Não foi possível cadastrar.'
+                );
+            }
+
+            mensagem.textContent = 'Tênis cadastrado com sucesso!';
+            formulario.reset();
+        } catch (erro) {
+            mensagem.textContent = erro.message;
+        }
+    });
+
+    verificarSessao();
+
+    
+    const listaAdmin = document.getElementById('listaAdmin');
+    const mensagemGerenciamento = document.getElementById('mensagemGerenciamento');
+
+    async function carregarProdutosAdmin() {
+        try {
+            const resposta = await fetch('/api/admin/produtos');
+            const produtos = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(produtos.erro || 'Erro ao carregar produtos.');
+            }
+
+            listaAdmin.replaceChildren();
+
+            if (produtos.length === 0) {
+                listaAdmin.textContent = 'Nenhum tênis cadastrado.';
+                return;
+            }
+
+            produtos.forEach(produto => {
+                const card = document.createElement('article');
+                card.className = 'produto-admin';
+
+                const nome = document.createElement('h3');
+                nome.textContent = produto.nome;
+
+                const preco = document.createElement('p');
+                preco.textContent = Number(produto.preco).toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                });
+
+                const estoque = document.createElement('p');
+                estoque.textContent = `Estoque: ${produto.estoque}`;
+
+                const editar = document.createElement('button');
+                editar.type = 'button';
+                editar.textContent = 'Editar';
+                editar.addEventListener('click', () => editarProduto(produto));
+
+                const excluir = document.createElement('button');
+                excluir.type = 'button';
+                excluir.textContent = 'Excluir';
+                excluir.addEventListener('click', () => excluirProduto(produto));
+
+                card.append(nome, preco, estoque, editar, excluir);
+                listaAdmin.appendChild(card);
+            });
+        } catch (erro) {
+            listaAdmin.textContent = erro.message;
+        }
+    }
+
+    async function excluirProduto(produto) {
+        if (!confirm(`Deseja excluir o tênis "${produto.nome}"?`)) {
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`/api/admin/produtos/${produto.id}`, {
+                method: 'DELETE'
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || 'Não foi possível excluir.');
+            }
+
+            mensagemGerenciamento.textContent = resultado.mensagem;
+            await carregarProdutosAdmin();
+        } catch (erro) {
+            mensagemGerenciamento.textContent = erro.message;
+        }
+    }
+
+    async function editarProduto(produto) {
+        const nome = prompt('Nome do tênis:', produto.nome);
+        if (nome === null) return;
+
+        const descricao = prompt('Descrição:', produto.descricao || '');
+        if (descricao === null) return;
+
+        const preco = prompt('Preço (R$):', produto.preco);
+        if (preco === null) return;
+
+        const estoque = prompt('Quantidade em estoque:', produto.estoque);
+        if (estoque === null) return;
+
+        const dados = new FormData();
+        dados.append('nome', nome);
+        dados.append('descricao', descricao);
+        dados.append('preco', preco.replace(',', '.'));
+        dados.append('estoque', estoque);
+
+        try {
+            const resposta = await fetch(`/api/admin/produtos/${produto.id}`, {
+                method: 'PUT',
+                body: dados
+            });
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(resultado.erro || 'Não foi possível editar.');
+            }
+
+            mensagemGerenciamento.textContent = resultado.mensagem;
+            await carregarProdutosAdmin();
+        } catch (erro) {
+            mensagemGerenciamento.textContent = erro.message;
+        }
+    }
+
+</script>
+
+</body>
+</html>
