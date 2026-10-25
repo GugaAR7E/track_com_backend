@@ -1,6 +1,6 @@
 
 require('dotenv').config();
-
+const bcrypt = require('bcrypt');
 const express = require('express');
 const mysql = require('mysql2/promise');
 const path = require('path');
@@ -56,7 +56,6 @@ const upload = multer({
 
 const app = express();
 const PORT = 3000;
-
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT || 3306),
@@ -254,6 +253,144 @@ app.get('/api/admin/sessao', (req, res) => {
         autenticado: req.session?.admin === true
     });
 });
+
+
+/* CADASTRO DE CLIENTE */
+app.post('/api/cadastro', async (req, res) => {
+    try {
+        const { nome, email, senha } = req.body || {};
+
+        if (!nome?.trim() || !email?.trim() || !senha) {
+            return res.status(400).json({
+                erro: 'Preencha todos os campos.'
+            });
+        }
+
+        if (senha.length < 6) {
+            return res.status(400).json({
+                erro: 'A senha deve ter pelo menos 6 caracteres.'
+            });
+        }
+
+        const emailNormalizado = email.trim().toLowerCase();
+        const senhaHash = await bcrypt.hash(senha, 12);
+
+        await db.execute(
+            `INSERT INTO track_usuarios (nome, email, senha)
+             VALUES (?, ?, ?)`,
+            [nome.trim(), emailNormalizado, senhaHash]
+        );
+
+        return res.status(201).json({
+            mensagem: 'Cadastro realizado com sucesso!'
+        });
+    } catch (erro) {
+        if (erro.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                erro: 'Este e-mail já está cadastrado.'
+            });
+        }
+
+        console.error('Erro no cadastro:', erro.message);
+
+        return res.status(500).json({
+            erro: 'Não foi possível realizar o cadastro.'
+        });
+    }
+});
+
+
+/* LOGIN DO CLIENTE */
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, senha } = req.body || {};
+
+        if (!email?.trim() || !senha) {
+            return res.status(400).json({
+                erro: 'Informe seu e-mail e sua senha.'
+            });
+        }
+
+        const [usuarios] = await db.execute(
+            `SELECT id, nome, email, senha
+             FROM track_usuarios
+             WHERE email = ?
+             LIMIT 1`,
+            [email.trim().toLowerCase()]
+        );
+
+        if (
+            usuarios.length === 0 ||
+            !(await bcrypt.compare(senha, usuarios[0].senha))
+        ) {
+            return res.status(401).json({
+                erro: 'E-mail ou senha incorretos.'
+            });
+        }
+
+        const usuario = usuarios[0];
+
+        req.session.regenerate((erro) => {
+            if (erro) {
+                return res.status(500).json({
+                    erro: 'Não foi possível iniciar a sessão.'
+                });
+            }
+
+            req.session.usuario = {
+                id: usuario.id,
+                nome: usuario.nome,
+                email: usuario.email
+            };
+
+            req.session.save((erroAoSalvar) => {
+                if (erroAoSalvar) {
+                    return res.status(500).json({
+                        erro: 'Não foi possível salvar a sessão.'
+                    });
+                }
+
+                return res.json({
+                    mensagem: 'Login realizado com sucesso!',
+                    usuario: req.session.usuario
+                });
+            });
+        });
+    } catch (erro) {
+        console.error('Erro no login:', erro.message);
+
+        return res.status(500).json({
+            erro: 'Não foi possível realizar o login.'
+        });
+    }
+});
+
+
+/* VERIFICAR SESSÃO DO CLIENTE */
+app.get('/api/sessao', (req, res) => {
+    res.json({
+        usuario: req.session?.usuario || null
+    });
+});
+
+
+/* SAIR DA CONTA */
+app.post('/api/logout', (req, res) => {
+    req.session.destroy((erro) => {
+        if (erro) {
+            return res.status(500).json({
+                erro: 'Não foi possível sair da conta.'
+            });
+        }
+
+        res.clearCookie('connect.sid');
+
+        return res.json({
+            mensagem: 'Você saiu da sua conta.'
+        });
+    });
+});
+
 
 app.listen(PORT, () => {
     console.log(`Track disponível em http://localhost:${PORT}`);

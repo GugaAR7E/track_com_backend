@@ -33,6 +33,52 @@
             align-items: center;
             border-bottom: 1px solid #202b40;
         }
+        
+/* Janela de login por cima da loja */
+        #conta {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.78);
+            overflow-y: auto;
+        }
+
+        /* Cartão central de login e cadastro */
+        #conta .conta {
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            margin: auto;
+            background: #111827;
+            border: 1px solid #354158;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Botão para continuar sem login */
+        #continuarSemLogin {
+            display: block;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 12px;
+            border: 1px solid #354158;
+            border-radius: 8px;
+            background: transparent;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        #continuarSemLogin:hover {
+            background: #1f2937;
+        }
+
 
         .logo {
             font-size: 28px;
@@ -74,11 +120,89 @@
             margin-bottom: 25px;
         }
 
-        .produtos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 22px;
-        }
+
+.produtos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 22px;
+}
+
+/* Ajuste para celulares */
+@media (max-width: 600px) {
+    section {
+        padding: 30px 12px;
+    }
+
+    
+    /* Ajuste do cabeçalho no celular */
+    header {
+        padding: 16px 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .logo {
+        font-size: 25px;
+        text-align: center;
+    }
+
+    header nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+    }
+
+    header nav a {
+        margin-left: 0;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    
+    .produto {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+
+    .preco {
+        font-size: 15px;
+        text-align: center;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        max-width: 100%;
+        line-height: 1.4;
+    }
+
+
+
+    .produtos {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .produto {
+        min-width: 0;
+        padding: 10px;
+    }
+
+    .imagem-produto {
+        height: 130px;
+        object-fit: contain;
+    }
+
+    .produto h3 {
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .preco {
+        font-size: 16px;
+    }
+}
+
 
         .produto {
             background: #111827;
@@ -142,12 +266,149 @@
             color: #a8bbff;
         }
 
-        footer {
-            text-align: center;
-            padding: 25px;
-            color: #8c96a8;
-            border-top: 1px solid #202b40;
+        .rodape-track {
+    background-color: #111;
+    color: #aaa;
+    text-align: center;
+    padding: 25px 15px;
+    margin-top: 40px;
+    font-size: 13px;
         }
+
+        .link-admin {
+            display: inline-block;
+            margin-top: 8px;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .link-admin:hover {
+            color: #fff;
+        }
+
+        
+/* Janela Minha Conta */
+#janelaMinhaConta {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.78);
+    overflow-y: auto;
+}
+
+    /* Cartão dos dados da conta */
+    #janelaMinhaConta .conteudoMinhaConta {
+        width: 100%;
+        max-width: 400px;
+        max-height: 90vh;
+        overflow-y: auto;
+        margin: auto;
+        padding: 25px;
+        background: #111827;
+        color: white;
+        border: 1px solid #354158;
+        border-radius: 14px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    #janelaMinhaConta h2 {
+        margin-top: 0;
+        margin-bottom: 25px;
+    }
+
+    #janelaMinhaConta p {
+        margin: 15px 0;
+        overflow-wrap: anywhere;
+    }
+
+    #janelaMinhaConta button {
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px;
+        border: 1px solid #354158;
+        border-radius: 8px;
+        background: #1f2937;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    #janelaMinhaConta #sairDaContaModal {
+        background: #2563eb;
+        border-color: #2563eb;
+    }
+
+    #janelaMinhaConta button:hover {
+        filter: brightness(1.15);
+    }
+
+    .botao-comprar {
+    margin-top: 12px;
+}
+
+
+#carrinhoFlutuante {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    width: 62px;
+    height: 62px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #315fe8;
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100px);
+    transition: opacity 0.35s ease,
+                transform 0.35s ease,
+                visibility 0.35s;
+}
+
+#carrinhoFlutuante.visivel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.icone-carrinho {
+    font-size: 27px;
+}
+
+.contador-carrinho {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 23px;
+    height: 23px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    color: #0d1424;
+    border-radius: 50%;
+    font-size: 12px;
+    font-weight: bold;
+    border: 2px solid #315fe8;
+}
+
+#carrinhoFlutuante:hover {
+    background: #4775ff;
+}
+
+
     </style>
 </head>
 
@@ -159,7 +420,7 @@
         <nav>
             <a href="#inicio">Início</a>
             <a href="#produtos">Produtos</a>
-            <a href="#conta">Minha conta</a>
+            <a href="#" id="minhaContaLink">Minha conta</a>
         </nav>
     </header>
 
@@ -178,6 +439,11 @@
 
         <section id="conta">
             <div class="conta">
+                
+                <button id="continuarSemLogin" type="button">
+                    Continuar sem login
+                </button>
+
                 <h2>Crie sua conta</h2>
 
                 <form id="formCadastro">
@@ -233,15 +499,47 @@
                 </button>
             </div>
         </section>
+        
+<!-- Janela Minha Conta -->
+        <div id="janelaMinhaConta" style="display: none;">
+            <div class="conteudoMinhaConta">
+                <h2>Minha conta</h2>
+
+                <p><strong>Nome:</strong> <span id="nomeDaConta"></span></p>
+
+                <p><strong>E-mail:</strong> <span id="emailDaConta"></span></p>
+
+                <button id="sairDaContaModal" type="button">
+                    Sair da conta
+                </button>
+
+                <button id="fecharMinhaConta" type="button">
+                    Fechar
+                </button>
+            </div>
+        </div>
+        
+
     </main>
 
-    <footer>
-        <p>TRACK © 2026 — Todos os direitos reservados.</p>
+        <a href="carrinho.html" id="carrinhoFlutuante" aria-label="Abrir carrinho">
+            <span class="icone-carrinho">🛒</span>
+            <span class="contador-carrinho" id="contadorCarrinho">0</span>
+        </a>
+
+
+    <footer class="rodape-track">
+        <p>&copy; 2026 Track. Todos os direitos reservados.</p>
+
+        <a href="admin.html" class="link-admin">
+            Área administrativa
+        </a>
     </footer>
 
     <script>
         const listaProdutos = document.getElementById("listaProdutos");
         const mensagem = document.getElementById("mensagem");
+
 
         async function carregarProdutos() {
             try {
@@ -255,7 +553,6 @@
 
                 listaProdutos.innerHTML = "";
 
-                
                 produtos.forEach(produto => {
                     const card = document.createElement("article");
                     card.className = "produto";
@@ -281,10 +578,23 @@
                             currency: "BRL"
                         });
 
-                    card.append(nome, preco);
+                    const botaoComprar = document.createElement("button");
+                    botaoComprar.type = "button";
+                    botaoComprar.className = "botao-comprar";
+                    botaoComprar.textContent = "Comprar";
+
+                    botaoComprar.addEventListener("click", () => {
+                        const produtoSelecionado = encodeURIComponent(
+                            JSON.stringify(produto)
+                        );
+
+                        window.location.href =
+                            "produto.html?item=" + produtoSelecionado;
+                    });
+
+                    card.append(nome, preco, botaoComprar);
                     listaProdutos.appendChild(card);
                 });
-
 
                 if (produtos.length === 0) {
                     listaProdutos.textContent =
@@ -296,6 +606,7 @@
                 console.error(erro);
             }
         }
+
 
         document.getElementById("formCadastro")
             .addEventListener("submit", async evento => {
@@ -373,6 +684,9 @@
 
                 document.getElementById("botaoSair").hidden =
                     !dados.usuario;
+
+                document.getElementById("conta").style.display =
+                    dados.usuario ? "none" : "flex";
             } catch (erro) {
                 console.error("Não foi possível verificar a sessão.", erro);
             }
@@ -396,7 +710,84 @@
 
         carregarProdutos();
         verificarSessao();
+
+        
+        document.getElementById("continuarSemLogin")
+            .addEventListener("click", () => {
+                document.getElementById("conta").style.display = "none";
+            });
+
+            
+        document.getElementById("minhaContaLink")
+            .addEventListener("click", async (evento) => {
+                evento.preventDefault();
+
+        try {
+            const resposta = await fetch("/api/sessao");
+            const dados = await resposta.json();
+
+            if (dados.usuario) {
+                document.getElementById("nomeDaConta").textContent =
+                    dados.usuario.nome;
+
+                document.getElementById("emailDaConta").textContent =
+                    dados.usuario.email;
+
+                document.getElementById("janelaMinhaConta").style.display =
+                    "flex";
+            } else {
+                document.getElementById("conta").style.display = "flex";
+            }
+        } catch (erro) {
+            console.error("Erro ao consultar a conta:", erro);
+        }
+    });
+
+// Fechar a janela Minha Conta
+        document.getElementById("fecharMinhaConta")
+            .addEventListener("click", () => {
+                document.getElementById("janelaMinhaConta").style.display = "none";
+            });
+
+        // Sair da conta pela janela Minha Conta
+        document.getElementById("sairDaContaModal")
+            .addEventListener("click", () => {
+                document.getElementById("janelaMinhaConta").style.display = "none";
+                document.getElementById("botaoSair").click();
+            });
+
+            
+            function atualizarCarrinhoFlutuante() {
+                let carrinho = [];
+
+                try {
+                    carrinho = JSON.parse(
+                        localStorage.getItem("trackCarrinho") || "[]"
+                    );
+
+                    if (!Array.isArray(carrinho)) carrinho = [];
+                } catch (erro) {
+                    carrinho = [];
+                }
+
+                const total = carrinho.reduce(
+                    (soma, item) => soma + (Number(item.quantidade) || 1),
+                    0
+                );
+
+                document.getElementById("contadorCarrinho").textContent = total;
+
+                const botao = document.getElementById("carrinhoFlutuante");
+                botao.classList.toggle("visivel", total > 0);
+            }
+
+            atualizarCarrinhoFlutuante();
+
+            window.addEventListener("pageshow", atualizarCarrinhoFlutuante);
+
+
     </script>
+
 
 </body>
 </html>

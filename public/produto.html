@@ -1,0 +1,411 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produto | Track</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: white;
+        }
+
+        header {
+            background: #0d1424;
+            padding: 22px 8%;
+            border-bottom: 1px solid #202b40;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        header a:last-child {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 45px;
+            align-items: start;
+        }
+
+        .imagem-container {
+            background: #111827;
+            border: 1px solid #263248;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        #imagemProduto {
+            display: block;
+            width: 100%;
+            height: 430px;
+            object-fit: contain;
+        }
+
+        .informacoes h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        #precoProduto {
+            color: #7da0ff;
+            font-size: 25px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        #descricaoProduto {
+            color: #b5bdcc;
+            line-height: 1.7;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        h3 {
+            margin: 25px 0 12px;
+        }
+
+        .numeracoes {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .numero {
+            padding: 13px 5px;
+            margin: 0;
+            background: #111827;
+            color: white;
+            border: 1px solid #354158;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .numero:hover,
+        .numero.selecionado {
+            border-color: #7da0ff;
+            background: #1b2b50;
+        }
+
+        #adicionarCarrinho {
+            margin-top: 25px;
+            padding: 16px;
+            background: #315fe8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #adicionarCarrinho:hover {
+            background: #4775ff;
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            color: #a8bbff;
+            line-height: 1.5;
+        }
+
+        .botao {
+            display: block;
+            width: 100%;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 18px 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                margin: 25px auto;
+                padding: 0 15px;
+            }
+
+            #imagemProduto {
+                height: 280px;
+            }
+
+            .informacoes h1 {
+                font-size: 26px;
+            }
+
+            .numeracoes {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        
+        #carrinhoFlutuante {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            width: 62px;
+            height: 62px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #315fe8;
+            color: white;
+            text-decoration: none;
+            border-radius: 50%;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.35);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100px);
+            transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
+        }
+
+        #carrinhoFlutuante.visivel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        .icone-carrinho {
+            font-size: 27px;
+        }
+
+        .contador-carrinho {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 23px;
+            height: 23px;
+            padding: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            color: #0d1424;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #315fe8;
+        }
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">TRACK</a>
+        <a href="index.html">← Voltar à loja</a>
+    </header>
+
+    <main>
+        <div class="imagem-container">
+            <img id="imagemProduto" alt="Imagem do tênis">
+        </div>
+
+        <div class="informacoes">
+            <h1 id="nomeProduto">Carregando produto...</h1>
+
+            <p id="precoProduto"></p>
+
+            <p id="descricaoProduto"></p>
+
+            <h3>Escolha sua numeração</h3>
+
+            <div class="numeracoes" id="numeracoes"></div>
+
+            <button id="adicionarCarrinho" class="botao">
+                Adicionar ao carrinho
+            </button>
+
+            <p id="mensagem" role="status"></p>
+        </div>
+    </main>
+
+    
+        <a href="carrinho.html" id="carrinhoFlutuante" aria-label="Abrir carrinho">
+            <span class="icone-carrinho">🛒</span>
+            <span class="contador-carrinho" id="contadorCarrinho">0</span>
+        </a>
+
+
+    <script>
+        const parametros = new URLSearchParams(window.location.search);
+        const item = parametros.get("item");
+
+        let produto;
+
+        try {
+            produto = JSON.parse(item);
+        } catch (erro) {
+            produto = null;
+        }
+
+        const mensagem = document.getElementById("mensagem");
+        const botaoCarrinho = document.getElementById("adicionarCarrinho");
+        const tamanhos = [37, 38, 39, 40, 41, 42, 43, 44];
+        let tamanhoSelecionado = null;
+
+        if (!produto || !produto.nome) {
+            document.getElementById("nomeProduto").textContent =
+                "Produto não encontrado";
+
+            mensagem.textContent =
+                "Volte à loja e selecione um tênis novamente.";
+
+            botaoCarrinho.disabled = true;
+        } else {
+            document.title = produto.nome + " | Track";
+
+            document.getElementById("nomeProduto").textContent =
+                produto.nome;
+
+            document.getElementById("precoProduto").textContent =
+                Number(produto.preco).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL"
+                });
+
+            document.getElementById("descricaoProduto").textContent =
+                produto.descricao || "Confira os detalhes deste modelo.";
+
+            const imagem = document.getElementById("imagemProduto");
+
+            if (produto.imagem) {
+                imagem.src = produto.imagem;
+            } else {
+                imagem.alt = "Este produto não possui imagem cadastrada";
+            }
+
+            const container = document.getElementById("numeracoes");
+
+            tamanhos.forEach(tamanho => {
+                const botao = document.createElement("button");
+                botao.type = "button";
+                botao.className = "numero";
+                botao.textContent = tamanho;
+                botao.setAttribute("aria-pressed", "false");
+
+                botao.addEventListener("click", () => {
+                    tamanhoSelecionado = tamanho;
+
+                    document.querySelectorAll(".numero").forEach(outro => {
+                        outro.classList.remove("selecionado");
+                        outro.setAttribute("aria-pressed", "false");
+                    });
+
+                    botao.classList.add("selecionado");
+                    botao.setAttribute("aria-pressed", "true");
+                    mensagem.textContent = "";
+                });
+
+                container.appendChild(botao);
+            });
+        }
+
+
+        botaoCarrinho.addEventListener("click", async () => {
+            if (!produto || !produto.nome) return;
+
+            if (tamanhoSelecionado === null) {
+                mensagem.textContent =
+                    "Selecione uma numeração antes de continuar.";
+                return;
+            }
+
+            try {
+                const resposta = await fetch("/api/sessao");
+                const dados = await resposta.json();
+
+                if (!dados.usuario) {
+                    window.location.href = "index.html?login=1";
+                    return;
+                }
+            } catch (erro) {
+                mensagem.textContent =
+                    "Não foi possível verificar seu login. Tente novamente.";
+                return;
+            }
+
+            let carrinho = [];
+
+            try {
+                carrinho = JSON.parse(
+                    localStorage.getItem("trackCarrinho") || "[]"
+                );
+
+                if (!Array.isArray(carrinho)) carrinho = [];
+            } catch (erro) {
+                carrinho = [];
+            }
+
+            carrinho.push({
+                id: produto.id,
+                nome: produto.nome,
+                imagem: produto.imagem || "",
+                preco: Number(produto.preco),
+                tamanho: tamanhoSelecionado,
+                quantidade: 1
+            });
+
+            localStorage.setItem("trackCarrinho", JSON.stringify(carrinho));
+
+            atualizarCarrinhoFlutuante();
+
+            mensagem.textContent = "Tênis adicionado ao carrinho com sucesso!";
+        });
+
+                
+        function atualizarCarrinhoFlutuante() {
+            let carrinho = [];
+
+            try {
+                carrinho = JSON.parse(localStorage.getItem("trackCarrinho") || "[]");
+                if (!Array.isArray(carrinho)) carrinho = [];
+            } catch (erro) {
+                carrinho = [];
+            }
+
+            const total = carrinho.reduce(
+                (soma, item) => soma + (Number(item.quantidade) || 1),
+                0
+            );
+
+            document.getElementById("contadorCarrinho").textContent = total;
+
+            document.getElementById("carrinhoFlutuante")
+                .classList.toggle("visivel", total > 0);
+        }
+
+        atualizarCarrinhoFlutuante();
+
+    </script>
+</body>
+</html>

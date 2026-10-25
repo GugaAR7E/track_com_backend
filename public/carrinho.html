@@ -1,0 +1,737 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu carrinho | Track</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080b12;
+            color: white;
+        }
+
+        header {
+            background: #0d1424;
+            padding: 22px 8%;
+            border-bottom: 1px solid #202b40;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 3px;
+        }
+
+        header a:last-child {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 30px;
+            margin-bottom: 30px;
+        }
+
+        .layout-carrinho {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .secao {
+            background: #0d1424;
+            border: 1px solid #263248;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+
+        .secao h2 {
+            font-size: 20px;
+            margin-bottom: 22px;
+        }
+
+        .produto-carrinho {
+            display: grid;
+            grid-template-columns: 100px minmax(0, 1fr);
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid #263248;
+        }
+
+        .produto-carrinho:first-child {
+            padding-top: 0;
+        }
+
+        .produto-carrinho:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .produto-carrinho img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            background: #111827;
+            border-radius: 8px;
+        }
+
+        .produto-info h3 {
+            font-size: 16px;
+            margin: 4px 0 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .detalhe {
+            color: #aeb8ca;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .preco-produto {
+            color: #7da0ff;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        .acoes-produto {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .quantidade {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #111827;
+            border: 1px solid #354158;
+            border-radius: 6px;
+            padding: 5px 8px;
+        }
+
+        .quantidade button {
+            color: white;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 3px;
+        }
+
+        .remover {
+            background: transparent;
+            border: none;
+            color: #ff8b8b;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 13px;
+        }
+
+        .vazio {
+            color: #aeb8ca;
+            line-height: 1.6;
+        }
+
+        .voltar {
+            display: inline-block;
+            margin-top: 20px;
+            color: #9db5ff;
+            text-decoration: none;
+        }
+
+        .resumo-linha {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin: 18px 0;
+            color: #c4ccda;
+        }
+
+        .total {
+            padding-top: 18px;
+            border-top: 1px solid #354158;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .total span:last-child {
+            color: #7da0ff;
+        }
+
+        .aviso {
+            color: #9daac0;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 18px;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        .campo label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #dbe2ef;
+        }
+
+        .campo input,
+        .campo select {
+            width: 100%;
+            padding: 13px;
+            background: #080b12;
+            color: white;
+            border: 1px solid #354158;
+            border-radius: 7px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .campo input:focus,
+        .campo select:focus {
+            border-color: #7da0ff;
+        }
+
+        .campo input::placeholder {
+            color: #778196;
+        }
+
+        .campo select option {
+            background: #0d1424;
+            color: white;
+        }
+
+        .pagamento-opcoes {
+            display: grid;
+            gap: 12px;
+        }
+
+        .opcao-pagamento {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border: 1px solid #354158;
+            background: #080b12;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .opcao-pagamento:has(input:checked) {
+            border-color: #7da0ff;
+            background: #14203a;
+        }
+
+        .opcao-pagamento input {
+            accent-color: #315fe8;
+            width: 17px;
+            height: 17px;
+        }
+
+        .opcao-pagamento span {
+            font-size: 14px;
+        }
+
+        .botao-finalizar {
+            width: 100%;
+            padding: 16px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 8px;
+            background: #315fe8;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .botao-finalizar:hover {
+            background: #4775ff;
+        }
+
+        .botao-finalizar:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #mensagem {
+            margin-top: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #a8bbff;
+        }
+
+        @media (max-width: 750px) {
+            header {
+                padding: 18px 15px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
+
+            header a:last-child {
+                font-size: 13px;
+            }
+
+            main {
+                margin: 25px auto;
+                padding: 0 12px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .layout-carrinho {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 0;
+            }
+
+            .secao {
+                padding: 17px;
+            }
+
+            .produto-carrinho {
+                grid-template-columns: 80px minmax(0, 1fr);
+                gap: 12px;
+            }
+
+            .produto-carrinho img {
+                width: 80px;
+                height: 85px;
+            }
+
+            .produto-info h3 {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <a href="index.html" class="logo">TRACK</a>
+        <a href="index.html">← Voltar à loja</a>
+    </header>
+
+    <main>
+        <h1>Meu carrinho</h1>
+
+        <div class="layout-carrinho">
+            <div>
+                <section class="secao">
+                    <h2>Seus produtos</h2>
+
+                    <div id="listaCarrinho"></div>
+
+                    <a href="index.html" class="voltar">
+                        + Continuar comprando
+                    </a>
+                </section>
+
+                <section class="secao">
+                    <h2>Dados de entrega</h2>
+
+                    <form id="formEntrega">
+                        <div class="campo">
+                            <label for="cpf">CPF</label>
+                            <input
+                                type="text"
+                                id="cpf"
+                                placeholder="000.000.000-00"
+                                inputmode="numeric"
+                                maxlength="14"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="cep">CEP</label>
+                            <input
+                                type="text"
+                                id="cep"
+                                placeholder="00000-000"
+                                inputmode="numeric"
+                                maxlength="9"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="endereco">Endereço</label>
+                            <input
+                                type="text"
+                                id="endereco"
+                                placeholder="Rua e avenida"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="numeroEndereco">Número</label>
+                            <input
+                                type="text"
+                                id="numeroEndereco"
+                                placeholder="Número do imóvel"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="complemento">Complemento (opcional)</label>
+                            <input
+                                type="text"
+                                id="complemento"
+                                placeholder="Apartamento, bloco etc."
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="bairro">Bairro</label>
+                            <input
+                                type="text"
+                                id="bairro"
+                                placeholder="Seu bairro"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="cidade">Cidade</label>
+                            <input
+                                type="text"
+                                id="cidade"
+                                placeholder="Sua cidade"
+                                required
+                            >
+                        </div>
+
+                        <div class="campo">
+                            <label for="estado">Estado</label>
+                            <select id="estado" required>
+                                <option value="">Selecione</option>
+                                <option value="AC">Acre</option>
+                                <option value="AL">Alagoas</option>
+                                <option value="AP">Amapá</option>
+                                <option value="AM">Amazonas</option>
+                                <option value="BA">Bahia</option>
+                                <option value="CE">Ceará</option>
+                                <option value="DF">Distrito Federal</option>
+                                <option value="ES">Espírito Santo</option>
+                                <option value="GO">Goiás</option>
+                                <option value="MA">Maranhão</option>
+                                <option value="MT">Mato Grosso</option>
+                                <option value="MS">Mato Grosso do Sul</option>
+                                <option value="MG">Minas Gerais</option>
+                                <option value="PA">Pará</option>
+                                <option value="PB">Paraíba</option>
+                                <option value="PR">Paraná</option>
+                                <option value="PE">Pernambuco</option>
+                                <option value="PI">Piauí</option>
+                                <option value="RJ">Rio de Janeiro</option>
+                                <option value="RN">Rio Grande do Norte</option>
+                                <option value="RS">Rio Grande do Sul</option>
+                                <option value="RO">Rondônia</option>
+                                <option value="RR">Roraima</option>
+                                <option value="SC">Santa Catarina</option>
+                                <option value="SP">São Paulo</option>
+                                <option value="SE">Sergipe</option>
+                                <option value="TO">Tocantins</option>
+                            </select>
+                        </div>
+                    </form>
+                </section>
+            </div>
+
+            <div>
+                <section class="secao">
+                    <h2>Resumo do pedido</h2>
+
+                    <div class="resumo-linha">
+                        <span>Produtos</span>
+                        <span id="quantidadeTotal">0 itens</span>
+                    </div>
+
+                    <div class="resumo-linha total">
+                        <span>Total</span>
+                        <span id="valorTotal">R$ 0,00</span>
+                    </div>
+
+                    <p class="aviso">
+                        O total considera apenas os produtos adicionados.
+                        O frete ainda não está incluído.
+                    </p>
+                </section>
+
+                <section class="secao">
+                    <h2>Forma de pagamento</h2>
+
+                    <div class="pagamento-opcoes">
+                        <label class="opcao-pagamento">
+                            <input type="radio" name="pagamento" value="pix" required>
+                            <span>Pix</span>
+                        </label>
+
+                        <label class="opcao-pagamento">
+                            <input type="radio" name="pagamento" value="credito">
+                            <span>Cartão de crédito</span>
+                        </label>
+
+                        <label class="opcao-pagamento">
+                            <input type="radio" name="pagamento" value="debito">
+                            <span>Cartão de débito</span>
+                        </label>
+                    </div>
+
+                    <button
+                        type="submit"
+                        form="formEntrega"
+                        class="botao-finalizar"
+                        id="botaoFinalizar"
+                    >
+                        Finalizar pedido
+                    </button>
+
+                    <p id="mensagem" role="status"></p>
+
+                    <p class="aviso">
+                        Demonstração visual: nenhum pedido ou pagamento será
+                        processado. Não informe dados pessoais reais nesta versão.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const listaCarrinho = document.getElementById("listaCarrinho");
+        const quantidadeTotal = document.getElementById("quantidadeTotal");
+        const valorTotal = document.getElementById("valorTotal");
+        const mensagem = document.getElementById("mensagem");
+        const botaoFinalizar = document.getElementById("botaoFinalizar");
+
+        function obterCarrinho() {
+            try {
+                const carrinho = JSON.parse(
+                    localStorage.getItem("trackCarrinho") || "[]"
+                );
+
+                return Array.isArray(carrinho) ? carrinho : [];
+            } catch (erro) {
+                return [];
+            }
+        }
+
+        function salvarCarrinho(carrinho) {
+            localStorage.setItem("trackCarrinho", JSON.stringify(carrinho));
+        }
+
+        function formatarPreco(valor) {
+            return Number(valor).toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL"
+            });
+        }
+
+        function renderizarCarrinho() {
+            const carrinho = obterCarrinho();
+            listaCarrinho.innerHTML = "";
+
+            let totalItens = 0;
+            let totalPreco = 0;
+
+            if (carrinho.length === 0) {
+                const texto = document.createElement("p");
+                texto.className = "vazio";
+                texto.textContent = "Seu carrinho está vazio. Explore a loja e encontre seu próximo tênis.";
+                listaCarrinho.appendChild(texto);
+                botaoFinalizar.disabled = true;
+            } else {
+                botaoFinalizar.disabled = false;
+
+                carrinho.forEach((produto, indice) => {
+                    const quantidade = Math.max(
+                        1,
+                        Number(produto.quantidade) || 1
+                    );
+
+                    const preco = Number(produto.preco) || 0;
+
+                    totalItens += quantidade;
+                    totalPreco += preco * quantidade;
+
+                    const item = document.createElement("article");
+                    item.className = "produto-carrinho";
+
+                    const imagem = document.createElement("img");
+                    imagem.alt = produto.nome || "Tênis";
+
+                    if (produto.imagem) {
+                        imagem.src = produto.imagem;
+                    } else {
+                        imagem.alt = "Produto sem imagem";
+                    }
+
+                    const info = document.createElement("div");
+                    info.className = "produto-info";
+
+                    const nome = document.createElement("h3");
+                    nome.textContent = produto.nome || "Tênis Track";
+
+                    const tamanho = document.createElement("p");
+                    tamanho.className = "detalhe";
+                    tamanho.textContent = "Numeração: " + (produto.tamanho || "Não informada");
+
+                    const precoItem = document.createElement("p");
+                    precoItem.className = "preco-produto";
+                    precoItem.textContent = formatarPreco(preco);
+
+                    const acoes = document.createElement("div");
+                    acoes.className = "acoes-produto";
+
+                    const controleQuantidade = document.createElement("div");
+                    controleQuantidade.className = "quantidade";
+
+                    const diminuir = document.createElement("button");
+                    diminuir.type = "button";
+                    diminuir.textContent = "−";
+                    diminuir.setAttribute("aria-label", "Diminuir quantidade");
+
+                    const numeroQuantidade = document.createElement("span");
+                    numeroQuantidade.textContent = quantidade;
+
+                    const aumentar = document.createElement("button");
+                    aumentar.type = "button";
+                    aumentar.textContent = "+";
+                    aumentar.setAttribute("aria-label", "Aumentar quantidade");
+
+                    diminuir.addEventListener("click", () => {
+                        const itens = obterCarrinho();
+
+                        if (Number(itens[indice].quantidade || 1) > 1) {
+                            itens[indice].quantidade =
+                                Number(itens[indice].quantidade || 1) - 1;
+                        } else {
+                            itens.splice(indice, 1);
+                        }
+
+                        salvarCarrinho(itens);
+                        mensagem.textContent = "";
+                        renderizarCarrinho();
+                    });
+
+                    aumentar.addEventListener("click", () => {
+                        const itens = obterCarrinho();
+                        itens[indice].quantidade =
+                            Number(itens[indice].quantidade || 1) + 1;
+
+                        salvarCarrinho(itens);
+                        mensagem.textContent = "";
+                        renderizarCarrinho();
+                    });
+
+                    controleQuantidade.append(
+                        diminuir,
+                        numeroQuantidade,
+                        aumentar
+                    );
+
+                    const remover = document.createElement("button");
+                    remover.type = "button";
+                    remover.className = "remover";
+                    remover.textContent = "Remover";
+
+                    remover.addEventListener("click", () => {
+                        const itens = obterCarrinho();
+                        itens.splice(indice, 1);
+                        salvarCarrinho(itens);
+                        mensagem.textContent = "";
+                        renderizarCarrinho();
+                    });
+
+                    acoes.append(controleQuantidade, remover);
+                    info.append(nome, tamanho, precoItem, acoes);
+                    item.append(imagem, info);
+                    listaCarrinho.appendChild(item);
+                });
+            }
+
+            quantidadeTotal.textContent =
+                totalItens + (totalItens === 1 ? " item" : " itens");
+
+            valorTotal.textContent = formatarPreco(totalPreco);
+        }
+
+        document.getElementById("cpf").addEventListener("input", (evento) => {
+            let valor = evento.target.value.replace(/\D/g, "").slice(0, 11);
+
+            valor = valor
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d)/, "$1.$2")
+                .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+
+            evento.target.value = valor;
+        });
+
+        document.getElementById("cep").addEventListener("input", (evento) => {
+            let valor = evento.target.value.replace(/\D/g, "").slice(0, 8);
+
+            if (valor.length > 5) {
+                valor = valor.slice(0, 5) + "-" + valor.slice(5);
+            }
+
+            evento.target.value = valor;
+        });
+
+        document.getElementById("formEntrega").addEventListener("submit", (evento) => {
+            evento.preventDefault();
+
+            if (obterCarrinho().length === 0) {
+                mensagem.textContent = "Adicione um produto ao carrinho primeiro.";
+                return;
+            }
+
+            const pagamento = document.querySelector(
+                'input[name="pagamento"]:checked'
+            );
+
+            if (!pagamento) {
+                mensagem.textContent = "Selecione uma forma de pagamento.";
+                return;
+            }
+
+            mensagem.textContent =
+                "Demonstração: formulário validado visualmente. Nenhum pedido foi enviado e nenhum pagamento foi realizado.";
+        });
+
+        renderizarCarrinho();
+    </script>
+</body>
+</html>
