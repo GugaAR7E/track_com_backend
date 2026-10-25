@@ -8,7 +8,7 @@ const multer = require('multer');
 const fs = require('fs');
 const session = require('express-session');
 
-const pastaUploads = path.join(__dirname, 'public', 'uploads');
+const pastaUploads = path.join('/tmp', 'track-uploads');
 
 if (!fs.existsSync(pastaUploads)) {
     fs.mkdirSync(pastaUploads, { recursive: true });
